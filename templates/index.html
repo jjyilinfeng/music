@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+<meta charset="utf-8">
+<title>master的音乐下载网站</title>
+<link href="{% static 'images/music_icon.ico' %}" class="img-circle" rel="icon" type="image/x-ico">
+<style>
+body {
+padding-top:20px
+}
+        .starter{
+                    padding: 40px 20px;
+                    text-align: center;
+                }
+        .list{
+            position: relative;
+            margin: 0 auto;
+            height: 130px;
+            overflow: hidden;/*设置文案容器高度，超出部分隐藏*/
+            text-align: center;
+        }
+        .music_msg1{
+        text-align :center;
+        }
+        .music_msg2{
+        text-align :center;
+        }
+
+
+        .open-btn{
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            height: 80px;
+            background: linear-gradient(180deg,rgba(255,255,255,0),#fff);/*实现渐变效果，遮罩效果*/
+            text-align: center;
+        }
+        .open-btn a{
+            text-decoration: none;
+            color: chocolate;
+            display: inline-block;
+            margin-top: 60px;
+        }
+        #s3 {
+        padding:0px;width:800px;
+        height:700px;margin:auto;
+        background:white;background:rgba(0, 0, 0, 0.6);
+        filter:Alpha(opacity=60);
+        box-shadow:10px 10px 20px rgba(0,0,0,0.3);
+        }
+		.s4 {
+		width:800px;
+		height:700px;
+		background:white;
+		}
+
+</style>
+
+</head>
+
+        <!--.loading_img{-->
+        <!--loat:right;-->
+        <!--margin-top:200px;-->
+        <!--}-->
+        <!--.loading_img img{-->
+        <!--display:none;-->
+        <!--}-->
+
+
+<script src="{% static 'js/particles.min.js' %}"></script>
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<div id="particles-js"></div>
+<link rel="stylesheet" href="{% static 'css/loading.css' %}">
+<link rel="stylesheet" href="{% static 'css/APlayer.min.css' %}">
+<link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+<script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+<script src="{% static 'js/APlayer.min.js' %}"></script>
+<script src="{% static 'js/testfunction.js' %}"></script>
+<script type="text/javascript">
+    // 等待所有加载
+    $(window).load(function(){
+        $('body').addClass('loaded');
+        $('#loader-wrapper .load_title').remove();
+    });
+
+    // 点击显示更多按钮
+    function showMore() {
+        $("#textcontain").height("auto");//取消文字容器高度限制
+        $("#btncontain").hide();//隐藏查看更多按钮
+    }
+
+
+
+</script>
+
+
+
+<body>
+    <!--loading界面初始-->
+    <div id="loader-wrapper">
+    <div id="loader"></div>
+    <div class="loader-section section-left"></div>
+    <div class="loader-section section-right"></div>
+    <div class="load_title">loading
+    <span>V1.0</span></div>
+    </div>
+    <!--loading界面初始end-->
+
+    <!--导航栏-->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="#" class="navbar-brand">Master的音乐下载网站</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="http://{{local_ip}}:8000/home/message">留言板</a></li>
+                    <li><a href="#"></a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="http://{{local_ip}}:8000/home/index">根据歌曲链接下载</a></li>
+                    <li><a href="http://{{local_ip}}:8000/home/songs">根据歌曲关键字下载</a></li>
+                    <li><a href="http://{{local_ip}}:8000/home/website_manual">使用说明书</a></li>
+                    <li><a href="http://{{local_ip}}:8000/home/music_key_statistics">站内统计</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--导航栏end-->
+
+
+
+
+
+
+    <!--搜索标题-->
+    <div class="tit">
+        <div class="starter">
+            <h1>全网音乐一键下载</h1>
+            <p class="lead">说明：将你想要下载的音乐网址输入到下方的搜索栏之中</p>
+            <div class="loading_img">
+                <img id="loading" src="{% static 'images/loading2.gif' %}"  style="float:right;display:none;"/>
+            </div>
+        </div>
+    </div>
+    <!--搜索标题end-->
+
+    <!--搜索输入框以及输出框-->
+	<div class="container">
+		<div class="form row">
+			<form method="post" class="form-horizontal col-sm-offset-3 col-md-offset-3" id="login_form">
+				{% csrf_token %}
+				<div class="col-sm-9 col-md-9">
+                    <div class="input-group">
+                        <span class="input-group-addon">歌曲链接:</span>
+			              <input type="text" id="search_music_url" class="form-control input-lg" placeholder="如https://music.163.com/#/song?id=1343016814" name="url">
+                        <span class="input-group-btn">
+                                <input type="submit" id="search_btn" class="btn btn-success btn-lg" onclick="CheckInput()" value="开始查找链接"/>
+
+					</span>
+		            </div>
+					<br/><br/>
+                    <div class="input-group">
+			        <span class="input-group-addon">下载地址</span>
+                        <input  type="text" class="form-control input-lg"  value="{{url}}" readonly/>
+                        <span class="input-group-btn">
+                            <a href="{{music_image}}" target="_blank">
+                                <input  type="button" class="btn btn-info btn-lg"  value="下载封面"/>
+                            </a>
+                            <a href="{{url}}" target="_blank">
+                            <button class="btn btn-success btn-lg" type="button">下载歌曲
+						</button>
+                            </a>
+					</span>
+		            </div>
+                    <br/>
+                    <div id="aplayer">
+                        <pre class="aplayer-lrc-content">
+                            {{music_lyric}}
+                        </pre>
+                    </div><br/>
+
+                    <div class="music_msg_1" style="width:100%">
+                         <div class="form-inline row">
+                          <input type="text"  title="歌曲名" style="width:31%" class="form-control" value="歌曲名：{{music_name}}" readonly/>
+		                  <input type="text" title="" style="width:31%" class="form-control" value="歌手：{{music_singer}}" readonly/>
+                             <input type="text" title="专辑" style="width:31%" class="form-control" value="专辑：{{music_info}}" readonly/>
+                         </div>
+                         <br/>
+                    </div>
+                        <div class="music_msg_2" style="width:100%">
+                            <div class="input-group">
+                             <span class="input-group-addon">歌词：</span>
+		                     <input type="text" title="歌词" id="lyric_content" class="form-control" value="{{music_lyric}}" readonly/>
+                             <span class="input-group-btn">
+                             <button class="btn btn-success"  data-clipboard-action="copy" data-clipboard-target="#lyric_content" type="button">复制歌词
+                             </button>
+                                 <a href="lyric_download" download="{{music_name}}-{{music_singer}}.lrc">
+                                 <button class="btn btn-info" type="button">下载歌词</button>
+                                </a>
+                             </span>
+                         </div>
+                        </div>
+                    </div>
+			</form>
+		</div>
+	</div>
+    <!--搜索输入框以及输出框end-->
+
+
+    <!--下方帮助-->
+    <div class="list" id="textcontain">
+        <br/>
+        <h4>食用方法：将下载链接右键，点击把目标链接另存为</h4>
+        <h5>网易云音乐格式：https://music.163.com/#/song?id=</h5>
+        <h5>酷我音乐格式：http://www.kuwo.cn/play_detail/</h5>
+        <h5>酷狗音乐格式：https://www.kugou.com/song/#hash=</h5>
+        <h5>QQ音乐格式：https://y.qq.com/n/yqq/song/</h5>
+        <h5>荔枝FM格式：https://www.lizhi.fm/</h5>
+        <h5>千千音乐（百度音乐）格式：http://music.taihe.com/song/</h5>
+        <h5>5sing音乐格式：http://5sing.kugou.com/</h5>
+    </div>
+
+    <div class="open-btn" id="btncontain"><a onclick="showMore()">查看更多</a></div>
+    <!--下方帮助end-->
+
+    <br/><br/><br/><br/>
+    <nav class="navbar navbar-inverse navbar-bottom" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <center><a href="#" class="navbar-brand">2020@Master</a></center>
+            </div>
+
+            </div>
+		</nav>
+
+    <script>
+    //复制到剪切板
+    var clipboard = new ClipboardJS('.btn');
+
+    clipboard.on('success', function(e) {
+        alert('已经复制到剪切板了哟！')
+    });
+
+    clipboard.on('error', function(e) {
+        alert('啊啦，失败了呢')
+        console.log(e);
+    });
+
+
+    //音乐播放器
+    var ap3 = new APlayer({
+        container: document.getElementById('aplayer'),//样式1
+        narrow: false,
+        autoplay: false,
+        showlrc: true,
+        loop: 'none',
+        theme: '#FADFA3',
+        music: {
+            title: {{ player_music_name|safe }},
+            author: {{ player_music_singer|safe }},
+            url: {{ player_url|safe }},
+            pic: {{ player_music_image|safe }},
+        }
+    });
+
+
+       //判断输入是否为空
+
+    function CheckInput(){
+        $(".curtain").css("display","block");
+        $(".curtain .left").animate({width:800},1000);
+        $(".curtain .right").animate({width:1120},1000);
+        setTimeout(function (){
+            $('#loader-wrapper').append('<div class="load_title">loading\n' +
+            '    <span>V1.0</span></div>');
+            $('body').removeClass('loaded');
+        },1000)
+
+    }
+
+</script>
+</body>
+</html>

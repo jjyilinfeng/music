@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>根据歌曲关键字下载</title>
+    {% load static %}
+    <link href="{% static 'images/music_icon.ico' %}" rel="icon" type="image/x-ico">
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/test.css' %}">
+    <link rel="stylesheet" href="{% static 'css/loading.css' %}">
+    <link rel="stylesheet" href="{% static 'css/songs_get.css' %}">
+    <link rel="stylesheet" href="{% static 'css/APlayer.min.css' %}">
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/APlayer.min.js' %}"></script>
+    <script src="{% static 'js/particles.min.js' %}"></script>
+
+
+
+
+
+    <script type="text/javascript">
+
+
+
+    // 等待所有加载
+    $(window).load(function(){
+        $('body').addClass('loaded');
+        $('#loader-wrapper .load_title').remove();
+    });
+    $(document).ready(function(){
+        $("#goToTop").hide()//隐藏go to top按钮
+        $(function(){
+            $(window).scroll(function(){
+                if($(this).scrollTop()>1){//当window的scrolltop距离大于1时，go to top按钮淡出，反之淡入
+                    $("#goToTop").fadeIn();
+                } else {
+                    $("#goToTop").fadeOut();
+                }
+            });
+        });
+     
+
+        // 给go to top按钮一个点击事件
+        $("#goToTop a").click(function(){
+            $("html,body").animate({scrollTop:0},800);//点击go to top按钮时，以800的速度回到顶部，这里的800可以根据你的需求修改
+            return false;
+        });
+    });
+
+
+
+
+    </script>
+
+</head>
+<body onload="i_empty_table()">
+    <!--loading界面初始-->
+    <div id="loader-wrapper">
+    <div id="loader"></div>
+    <div class="loader-section section-left"></div>
+    <div class="loader-section section-right"></div>
+    <div class="load_title">loading
+    <span>V1.0</span></div>
+    </div>
+
+    <div class="curtain" style="margin:0;padding:0;width: 1920px;height: 1080px;position: fixed;display: none;z-index: 99">
+        <div class="left" style="height:1080px;float: left;background-color:#66ccff;">
+
+        </div>
+        <div class="right" style="height:1080px;float: right;background-color:#66ccff;">
+
+        </div>
+    </div>
+    <!--loading界面初始end-->
+
+    <!--导航栏-->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="#" class="navbar-brand">Master的音乐下载网站</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="http://{{local_ip}}:8000/home/message">留言板</a></li>
+                    <li><a href="#"></a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li><a href="http://{{local_ip}}:8000/home/index">根据歌曲链接下载</a></li>
+                    <li class="active"><a href="http://{{local_ip}}:8000/home/songs">根据歌曲关键字下载</a></li>
+                    <li><a href="http://{{local_ip}}:8000/home/website_manual">使用说明书</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--导航栏end-->
+
+    <!--搜索标题-->
+    <div class="starter">
+        <h1>全网音乐一键下载</h1>
+        <p class="lead">说明：将你想要下载的音乐关键字输入到下方的搜索栏之中，并选择你到搜索的音乐库</p>
+        <p class="lead">注：网易云音乐不支持调动页数和目标数，默认为1和10</p>
+    </div>
+    <!--搜索标题end-->
+
+    <!--搜索输入框-->
+    <div class="input">
+		<div class="form row">
+			<form method="post" class="form-horizontal col-sm-offset-3 col-md-offset-3" id="login_form">
+				{% csrf_token %}
+				<div class="col-sm-9 col-md-9">
+                    <input type="hidden" name="music_type" id="category_id" value="{{music_type}}" />
+                    <div class="dropdown" style="left:40%">
+                    <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info btn-lg" data-target="#" href="javascript:;"><span id="select-title">网易云音乐</span> <span class="caret"></span></a>
+                    <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                        <li><a href="javascript:;" onclick="fadePage()" data-index="网易云音乐" data-title="网易云音乐">网易云音乐</a></li>
+                        <li><a href="javascript:;" data-index="QQ音乐" data-title="QQ音乐">QQ音乐</a></li>
+                        <li><a href="javascript:;" data-index="酷我音乐" data-title="酷我音乐">酷我音乐</a></li>
+                        <li><a href="javascript:;" data-index="酷狗音乐" data-title="酷狗音乐">酷狗音乐</a></li>
+                    </ul>
+                    </div>
+                    <div class="input-group input-lg">
+			            <input type="text"  class="form-control input-lg" placeholder="如周杰伦-稻香" id="search_music" value="{{in_music}}" name="song">
+                         <span class="input-group-btn">
+                            <input type="submit" id="search_btn" onclick="CheckInput()" class="btn btn-success btn-lg" value="开始查找歌曲">
+                         </span>
+		            </div>
+
+                    <div class="col-xs-5 col-sm-5 col-md-6 col-lg-6" id="page-box" style="left: 24%;display: none">
+                      <div class="input-group">
+                          <span class="input-group-addon">页数</span>
+                        <input type="text"  title="页数" class="form-control" value="1" name="page"/>
+		                  <span class="input-group-addon">歌曲数</span>
+                          <input type="text" title="搜索歌曲数" class="form-control" value="10" name="song_num"/>
+                          <span class="input-group-addon">0-30</span>
+                      </div>
+                    </div>
+
+				</div>
+			</form>
+		</div>
+	</div>
+    <!--搜索输入框end-->
+
+
+
+    <!--aplayer播放器-->
+    <div id="aplayer" style="width:50%;left:22%"></div>
+    <!--aplayer播放器end-->
+
+    <br/>
+    <!--输出表-->
+    <table class="table table-bordered table-hover" id="music_table" align="center" style="width: 80%; height: auto;">
+        <tr class="danger">
+            <th><center>来源</center></th>
+            <th><center>歌曲名</center></th>
+            <th><center>歌手</center></th>
+            <th><center>下载地址</center></th>
+        </tr>
+        {% for song in songs %}
+            <tr class="{% cycle 'active' 'success' 'warning' 'info' %}">
+                <td width="80"><center>{{song.song_come}}</center></td>
+                <td width="350"><a onclick="send_msg('{{song.song_no}}','{{song.song_link}}','{{song.song_img_link}}')"><center>{{song.song_name}}</center></a></td>
+                <td width="350"><center>{{song.song_singer}}</center></td>
+                <td width="500">
+                    <div class="input-group">
+			        <span class="input-group-addon">下载地址</span>
+			        <input type="text" class="form-control"  readonly maxlength="100" value={{song.song_link}}>
+                        <span class="input-group-btn">
+                            <a href="{{song.song_link}}" target="_blank">
+                            <button class="btn btn-success" type="button">点击下载
+						</button>
+                            </a>
+					</span>
+		            </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <!--输出表end-->
+
+
+    <!--返回顶部按钮-->
+    <div id="goToTop">
+    <a href="#">
+        <button class="btn btn-info btn-lg" type="button">返回顶部
+			</button>
+    </a>
+    </div>
+    <!--返回顶部按钮end-->
+    <br/><br/><br/>
+    <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <center><a href="#" class="navbar-brand">2020@Master</a></center>
+            </div>
+            </div>
+        </nav>
+
+
+    <script type="text/javascript">
+
+
+
+    //播放器
+    var ap3 = new APlayer({
+        container: document.getElementById('aplayer'),//样式1
+        narrow: false,
+        autoplay: false,
+        showlrc: false,
+        loop: 'none',
+        theme: '#FADFA3',
+        audio:[
+            {
+                name: "点击下方搜索出的歌曲标签可以播放歌曲",
+                artist: "赶快来试一下吧",
+                url: ""
+            }
+        ]
+    });
+
+        //传递歌曲信息
+    function send_msg(tr,link,img_link)
+    {
+        var x=document.getElementById('music_table').rows[tr].cells;
+        var url = link;
+        var img_url = img_link;
+        ap3 = new APlayer({
+        container: document.getElementById('aplayer'),//样式1
+        narrow: false,
+        autoplay: true,
+        showlrc: false,
+        loop: 'none',
+        theme: '#FADFA3',
+        audio:[
+            {
+                name: x[1].innerText,
+                artist: x[2].innerText,
+                url: url,
+                cover: img_url
+            }
+        ]
+    });
+    }
+
+        //输入之后动画
+    function CheckInput(){
+        $(".curtain").css("display","block");
+        $(".curtain .left").animate({width:800},1000);
+        $(".curtain .right").animate({width:1120},1000);
+        setTimeout(function (){
+            $('#loader-wrapper').append('<div class="load_title">loading\n' +
+            '    <span>V1.0</span></div>');
+            $('body').removeClass('loaded');
+        },1000)
+
+
+        img.style.display = "block";
+    }
+
+
+    //下拉菜单
+    $('.dropdown li a').click(function(){
+        title = $(this).attr("data-title");
+        id = $(this).attr("data-index");
+        $("#select-title").text(title);
+        $("#category_id").val(id);
+        if(id === "网易云音乐"){
+            $("#page-box").css("display","none");
+        }
+        else{
+            $("#page-box").css("display","inline");
+        }
+    })
+
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <title>平台留言</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<style>
+        body {
+			background-image: url({% static 'images/backgroud2.jpg' %});
+            padding-top: 50px;
+        }
+    #contact-area {
+        padding: 110px 0 120px;
+    }
+    .back{
+        padding-left:50px
+    }
+    .contact-box {
+        -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 50px 50px 35px;
+        background-color: #fff;
+        border-radius: 6px;
+    }
+
+    .contact-box input {
+        height: 50px;
+        border: 1px solid #f7f6f5;
+        font-size: 15px;
+        background-color: #f7f6f5;
+        font-weight: 500
+    }
+
+    .contact-box textarea {
+        border: 1px solid #f7f6f5;
+        padding-top: 10px;
+        background-color: #f7f6f5;
+        font-size: 15px;
+        font-weight: 500
+    }
+
+    .contact-box button {
+        background-color: #325eff;
+        border: 0;
+        color: #fff;
+        padding: 10px 30px;
+        border-radius: 4px;
+        cursor: pointer;
+        outline: 0;
+        font-weight: 500;
+        font-size: 15px
+    }
+
+    .contact-box button:hover {
+        background-color: #0f39cf;
+    }
+</style>
+<body>
+<div class="back">
+    <a href="http://192.168.31.30:8000/home/message">
+        <button class="btn btn-success btn-lg" type="button">返回
+			</button>
+    </a>
+</div>
+<section id="contact-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="contact-box text-center">
+                    <form id="ajax-contact" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <div class="col-lg-6"><input type="text" class="form-control" id="name" name="name"
+                                                         placeholder="姓名*" required=""></div>
+                            <div class="col-lg-6"><input type="email" class="form-control" id="email" name="email"
+                                                         placeholder="Email*" required=""></div>
+                        </div>
+                        <div class="form-group"><input type="text" class="form-control" id="subject" name="subject"
+                                                       placeholder="标题"></div>
+                        <div class="form-group"><textarea class="form-control" id="message" name="message" rows="10"
+                                                          placeholder="留言内容*" required=""></textarea></div>
+                        <button type="submit">提 交</button>
+                        <div id="form-messages"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

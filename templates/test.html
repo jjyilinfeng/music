@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta  http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Title</title>
+    <script type="text/javascript">
+        function se(){var List = {{ List|safe }};
+        alert(List);
+        }
+     </script>
+</head>
+<body>
+    <button class="btn btn-success btn-lg" onclick="se()" title="{{List}}" type="button">点击下载
+						</button>
+
+</body>
+</html>

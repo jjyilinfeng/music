@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+    <head>
+        <link href="{% static 'images/002.ico' %}" rel="icon" type="image/x-ico">
+        <meta charset="utf-8" />
+        <title>留言板</title>
+        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+        <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script src="{% static 'js/particles.js' %}"></script>
+        <style type="text/css">
+        .draw {
+            position: fixed;
+            width: 1px;
+            line-height: 1px;
+            pointer-events: none;
+        }
+        @keyframes floatOne {
+        0% {
+        opacity:1;
+        }
+        50% {
+        opacity:1;
+             }
+        100% {
+             opacity:0;
+        transform:translate3D(0, -20px, 0) scale(5) rotate(45deg);
+             }
+        }
+			body {
+			background-image: url({% static 'images/backgroud2.jpg' %});
+            padding-top: 50px;
+        }
+        .starter{
+            padding: 40px 15px;
+            text-align: center;
+        }
+        .list{
+        text-align: center;
+        }
+        table{
+         margin: auto;
+        }
+		</style>
+    </head>
+    <body>
+
+    <!--导航栏-->
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="#" class="navbar-brand">Master的音乐下载网站</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active"><a href="http://{{local_ip}}:8000/home/message">留言板</a></li>
+                        <li><a href="#"></a></li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        <li><a href="http://{{local_ip}}:8000/home/index">根据歌曲链接下载</a></li>
+                        <li><a href="http://{{local_ip}}:8000/home/songs">根据歌曲关键字下载</a></li>
+                        <li><a href="http://{{local_ip}}:8000/home/website_manual">使用说明书</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--导航栏end-->
+
+       <div class="starter">
+        <h1>欢迎来到留言板</h1>
+        <p class="lead">可以在这里留言，汇报程序BUG，提问题等等</p>
+        <br/>
+        <br/>
+        <h2>感谢您的使用</h2>
+    </div>
+        <table class="table table-striped table-bordered table-hover table-condensed" style="width: 80%; height: auto;">
+            <thead>
+                <tr class="danger">
+                    <th>留言时间</th>
+                    <th>留言者</th>
+                    <th>邮箱</th>
+                    <th>标题</th>
+                    <th>内容</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if messages %}
+                    {% for message in messages %}
+                        <tr class="{% cycle 'active' 'success' 'warning' 'info' %}">
+                            <td>{{ message.publish}}</td>
+                            <td>{{ message.username }}</td>
+                            <td>{{ message.mail }}</td>
+                            <td>{{ message.title }}</td>
+                            <td>{{ message.content }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4">无数据</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <div style="text-align:center">
+            <a href="http://{{local_ip}}:8000/home/message/create_message/">
+            <button class="btn btn-info btn-lg" type="button">去留言</button>
+            </a>
+        </div>
+    <br/><br/><br/><br/><br/>
+
+    </body>
+</html>

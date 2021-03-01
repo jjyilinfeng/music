@@ -1,0 +1,48 @@
+body{
+padding-top:20px
+}
+        .starter{
+                    padding: 40px 15px;
+                    text-align: center;
+                }
+        .list{
+            position: relative;
+            margin: 0 auto;
+            height: 130px;
+            overflow: hidden;/*设置文案容器高度，超出部分隐藏*/
+            text-align: center;
+        }
+        .music_msg1{
+        text-align :center;
+        }
+        .music_msg2{
+        text-align :center;
+        }
+
+
+        .open-btn{
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            height: 80px;
+            background: linear-gradient(180deg,rgba(255,255,255,0),#fff);/*实现渐变效果，遮罩效果*/
+            text-align: center;
+        }
+        .open-btn a{
+            text-decoration: none;
+            color: chocolate;
+            display: inline-block;
+            margin-top: 60px;
+        }
+        #s3 {
+        padding:0px;width:800px;
+        height:700px;margin:auto;
+        background:white;background:rgba(0, 0, 0, 0.6);
+        filter:Alpha(opacity=60);
+        box-shadow:10px 10px 20px rgba(0,0,0,0.3);
+        }
+		.s4 {
+		width:800px;
+		height:700px;
+		background:white;
+		}
